@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Handle With Care ♡</title>
+
+<style>
+
+/* ================================
+   GENERAL
+================================ */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 35px 15px 70px;
+
+    min-height: 100vh;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #fff9fc 0%,
+            #fff0f6 45%,
+            #fbe4ee 100%
+        );
+
+    color: #7d4860;
+
+    text-align: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 650px;
+
+    margin: auto;
+}
+
+
+/* ================================
+   INTRO
+================================ */
+
+.small-title {
+    margin-top: 15px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 4px;
+
+    font-size: 11px;
+
+    color: #b47b94;
+}
+
+h1 {
+    margin:
+        12px
+        0
+        12px;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(
+            38px,
+            9vw,
+            64px
+        );
+
+    font-weight: normal;
+
+    color: #914d6b;
+}
+
+.intro {
+    max-width: 500px;
+
+    margin:
+        0 auto
+        30px;
+
+    line-height: 1.7;
+
+    color: #9e6b82;
+}
+
+
+/* ================================
+   STATUS
+================================ */
+
+.status-bar {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 25px;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 18px;
+
+    font-size: 13px;
+
+    letter-spacing: 1px;
+}
+
+.status-box {
+    padding:
+        9px
+        15px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.7
+        );
+
+    border:
+        1px solid
+        #efccdc;
+
+    border-radius: 20px;
+}
+
+
+/* ================================
+   MODE BUTTONS
+================================ */
+
+.controls {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 24px;
+}
+
+.control-button {
+    border:
+        1px solid
+        #dca7bf;
+
+    border-radius: 10px;
+
+    padding:
+        10px
+        16px;
+
+    background: white;
+
+    color: #a34f75;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.control-button:hover {
+    transform:
+        translateY(-2px);
+}
+
+.control-button.active {
+    background: #bd5784;
+
+    color: white;
+
+    border-color:
+        #bd5784;
+}
+
+
+/* ================================
+   HEART BOARD
+================================ */
+
+.board-wrapper {
+    display: flex;
+
+    justify-content: center;
+
+    width: 100%;
+
+    overflow: hidden;
+}
+
+#board {
+    display: grid;
+
+    /*
+    13 columns.
+
+    Cell size automatically shrinks
+    on smaller phones.
+    */
+
+    grid-template-columns:
+        repeat(
+            13,
+            min(
+                6.6vw,
+                34px
+            )
+        );
+
+    grid-auto-rows:
+        min(
+            6.6vw,
+            34px
+        );
+
+    gap:
+        min(
+            0.9vw,
+            4px
+        );
+
+    justify-content: center;
+
+    margin:
+        5px auto
+        25px;
+}
+
+
+/* ================================
+   CELLS
+================================ */
+
+.cell {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+
+    padding: 0;
+
+    border:
+        1px solid
+        #e4afc6;
+
+    border-radius: 6px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffddea,
+            #f5bed4
+        );
+
+    box-shadow:
+        0 3px 7px
+        rgba(
+            120,
+            60,
+            85,
+            0.10
+        );
+
+    color: #80425e;
+
+    font-size:
+        clamp(
+            11px,
+            3.5vw,
+            17px
+        );
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    user-select: none;
+
+    transition:
+        transform 0.15s ease,
+        background 0.2s ease;
+}
+
+.cell:hover {
+    transform:
+        scale(1.07);
+}
+
+
+/* Spaces outside the heart */
+
+.cell.outside {
+    visibility: hidden;
+
+    pointer-events: none;
+}
+
+
+/* Revealed square */
+
+.cell.revealed {
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.75
+        );
+
+    box-shadow: none;
+
+    cursor: default;
+}
+
+
+/* Flag */
+
+.cell.flagged {
+    background: #f7cadc;
+
+    color: #a54270;
+}
+
+
+/* Mine */
+
+.cell.mine {
+    background: #d97b9e;
+
+    color: white;
+}
+
+
+/* ================================
+   NUMBER COLOURS
+================================ */
+
+.n1 {
+    color: #a94f76;
+}
+
+.n2 {
+    color: #855581;
+}
+
+.n3 {
+    color: #c15d6d;
+}
+
+.n4 {
+    color: #70527d;
+}
+
+.n5,
+.n6,
+.n7,
+.n8 {
+    color: #7a4058;
+}
+
+
+/* ================================
+   MESSAGE
+================================ */
+
+#message {
+    min-height: 28px;
+
+    margin-top: 12px;
+
+    color: #a15477;
+
+    font-family:
+        Georgia,
+        serif;
+
+    font-size: 17px;
+}
+
+
+/* ================================
+   WIN CARD
+================================ */
+
+#winCard {
+    display: none;
+
+    margin:
+        35px auto
+        0;
+
+    max-width: 500px;
+
+    padding:
+        35px
+        25px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.8
+        );
+
+    border:
+        1px solid
+        #efcadb;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 15px 45px
+        rgba(
+            110,
+            65,
+            85,
+            0.12
+        );
+
+    animation:
+        appear
+        0.7s ease;
+}
+
+#winCard.show {
+    display: block;
+}
+
+#winCard h2 {
+    margin-top: 0;
+
+    font-family:
+        Georgia,
+        serif;
+
+    font-weight: normal;
+
+    font-size: 30px;
+
+    color: #914d6b;
+}
+
+#winCard p {
+    line-height: 1.7;
+
+    color: #9a687e;
+}
+
+.continue-button {
+    margin-top: 12px;
+
+    padding:
+        13px
+        22px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: #b94f7d;
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.continue-button:hover {
+    background: #a3456d;
+}
+
+
+/* ================================
+   GAME OVER SHAKE
+================================ */
+
+.shake {
+    animation:
+        shake
+        0.35s ease;
+}
+
+@keyframes shake {
+
+    0% {
+        transform:
+            translateX(0);
+    }
+
+    25% {
+        transform:
+            translateX(-5px);
+    }
+
+    50% {
+        transform:
+            translateX(5px);
+    }
+
+    75% {
+        transform:
+            translateX(-3px);
+    }
+
+    100% {
+        transform:
+            translateX(0);
+    }
+}
+
+
+/* ================================
+   WIN APPEAR
+================================ */
+
+@keyframes appear {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (
+    max-width: 450px
+) {
+
+    body {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .intro {
+        font-size: 14px;
+    }
+
+    #board {
+        grid-template-columns:
+            repeat(
+                13,
+                min(
+                    6.5vw,
+                    30px
+                )
+            );
+
+        grid-auto-rows:
+            min(
+                6.5vw,
+                30px
+            );
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+    <!-- =========================
+         INTRO
+    ========================== -->
+
+    <div class="small-title">
+        STAGE TWO
+    </div>
+
+    <h1>
+        handle with care ♡
+    </h1>
+
+
+    <p class="intro">
+
+        You found the hidden code.
+
+        <br><br>
+
+        Now there's just one more
+        little challenge.
+
+        Clear the heart without
+        hitting any mines.
+
+        <br><br>
+
+        The numbers tell you how many
+        mines are touching that square.
+
+        Mark suspicious squares with ♡
+        and keep the heart safe.
+
+    </p>
+
+
+
+    <!-- =========================
+         STATUS
+    ========================== -->
+
+    <div class="status-bar">
+
+        <div class="status-box">
+
+            MINES:
+            <strong id="mineCount">
+                12
+            </strong>
+
+        </div>
+
+        <div class="status-box">
+
+            ♡ FLAGS:
+            <strong id="flagCount">
+                0
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         CONTROLS
+    ========================== -->
+
+    <div class="controls">
+
+        <button
+            id="revealMode"
+            class="control-button active">
+
+            Reveal
+
+        </button>
+
+
+        <button
+            id="flagMode"
+            class="control-button">
+
+            ♡ Flag
+
+        </button>
+
+
+        <button
+            id="restart"
+            class="control-button">
+
+            Restart
+
+        </button>
+
+    </div>
+
+
+
+    <!-- =========================
+         BOARD
+    ========================== -->
+
+    <div class="board-wrapper">
+
+        <div id="board"></div>
+
+    </div>
+
+
+    <div id="message">
+
+        First click is always safe ♡
+
+    </div>
+
+
+
+    <!-- =========================
+         WIN
+    ========================== -->
+
+    <div id="winCard">
+
+        <div class="small-title">
+
+            HEART CLEARED
+
+        </div>
+
+
+        <h2>
+
+            you made it through ♡
+
+        </h2>
+
+
+        <p>
+
+            Turns out this heart
+            was pretty safe with you.
+
+            <br><br>
+
+            There's one last thing
+            I want to show you.
+
+        </p>
+
+
+        <button
+            class="continue-button"
+            onclick="
+                window.location.href =
+                'memories.html'
+            ">
+
+            one last thing →
+
+        </button>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+/* =========================================
+   SETTINGS
+========================================= */
+
+const ROWS = 11;
+
+const COLS = 13;
+
+const MINE_TOTAL = 12;
+
+
+/*
+1 = playable heart square
+0 = empty space outside heart
+*/
+
+const heartShape = [
+
+    [0,0,1,1,1,0,0,0,1,1,1,0,0],
+
+    [0,1,1,1,1,1,0,1,1,1,1,1,0],
+
+    [1,1,1,1,1,1,1,1,1,1,1,1,1],
+
+    [1,1,1,1,1,1,1,1,1,1,1,1,1],
+
+    [1,1,1,1,1,1,1,1,1,1,1,1,1],
+
+    [0,1,1,1,1,1,1,1,1,1,1,1,0],
+
+    [0,0,1,1,1,1,1,1,1,1,1,0,0],
+
+    [0,0,0,1,1,1,1,1,1,1,0,0,0],
+
+    [0,0,0,0,1,1,1,1,1,0,0,0,0],
+
+    [0,0,0,0,0,1,1,1,0,0,0,0,0],
+
+    [0,0,0,0,0,0,1,0,0,0,0,0,0]
+
+];
+
+
+/* =========================================
+   GAME STATE
+========================================= */
+
+let cells = [];
+
+let firstClick = true;
+
+let gameOver = false;
+
+let mode = "reveal";
+
+let flags = 0;
+
+
+/* =========================================
+   CREATE BOARD
+========================================= */
+
+function createBoard() {
+
+    cells = [];
+
+    firstClick = true;
+
+    gameOver = false;
+
+    flags = 0;
+
+
+    document
+        .getElementById(
+            "flagCount"
+        )
+        .textContent = 0;
+
+
+    document
+        .getElementById(
+            "message"
+        )
+        .textContent =
+            "First click is always safe ♡";
+
+
+    document
+        .getElementById(
+            "winCard"
+        )
+        .classList
+        .remove("show");
+
+
+    const board =
+        document.getElementById(
+            "board"
+        );
+
+
+    board.innerHTML = "";
+
+
+    for (
+        let r = 0;
+        r < ROWS;
+        r++
+    ) {
+
+        cells[r] = [];
+
+
+        for (
+            let c = 0;
+            c < COLS;
+            c++
+        ) {
+
+
+            const playable =
+                heartShape[r][c] === 1;
+
+
+            const cell = {
+
+                r: r,
+
+                c: c,
+
+                playable: playable,
+
+                mine: false,
+
+                revealed: false,
+
+                flagged: false,
+
+                nearby: 0,
+
+                element: null
+
+            };
+
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.type =
+                "button";
+
+
+            button.className =
+                playable
+                    ? "cell"
+                    : "cell outside";
+
+
+            cell.element =
+                button;
+
+
+            if (playable) {
+
+                button.addEventListener(
+                    "click",
+                    () =>
+                        handleCell(cell)
+                );
+
+
+                /*
+                Desktop:
+                right click = flag
+                */
+
+                button.addEventListener(
+                    "contextmenu",
+                    event => {
+
+                        event.preventDefault();
+
+                        toggleFlag(cell);
+
+                    }
+                );
+
+            }
+
+
+            board.appendChild(
+                button
+            );
+
+
+            cells[r][c] =
+                cell;
+
+        }
+
+    }
+
+}
+
+
+
+/* =========================================
+   GET NEIGHBOURS
+========================================= */
+
+function neighbours(cell) {
+
+    const result = [];
+
+
+    for (
+        let dr = -1;
+        dr <= 1;
+        dr++
+    ) {
+
+        for (
+            let dc = -1;
+            dc <= 1;
+            dc++
+        ) {
+
+
+            if (
+                dr === 0 &&
+                dc === 0
+            ) {
+
+                continue;
+
+            }
+
+
+            const nr =
+                cell.r + dr;
+
+            const nc =
+                cell.c + dc;
+
+
+            if (
+                nr >= 0 &&
+                nr < ROWS &&
+                nc >= 0 &&
+                nc < COLS
+            ) {
+
+                const neighbour =
+                    cells[nr][nc];
+
+
+                if (
+                    neighbour &&
+                    neighbour.playable
+                ) {
+
+                    result.push(
+                        neighbour
+                    );
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    return result;
+
+}
+
+
+
+/* =========================================
+   PLACE MINES
+
+   First clicked square AND all squares
+   touching it are kept safe.
+========================================= */
+
+function placeMines(
+    safeCell
+) {
+
+    const protectedCells =
+        new Set();
+
+
+    protectedCells.add(
+        `${safeCell.r},${safeCell.c}`
+    );
+
+
+    neighbours(
+        safeCell
+    )
+    .forEach(cell => {
+
+        protectedCells.add(
+            `${cell.r},${cell.c}`
+        );
+
+    });
+
+
+    const possible = [];
+
+
+    cells
+        .flat()
+        .forEach(cell => {
+
+            if (
+                cell.playable &&
+                !protectedCells.has(
+                    `${cell.r},${cell.c}`
+                )
+            ) {
+
+                possible.push(
+                    cell
+                );
+
+            }
+
+        });
+
+
+    /*
+    Shuffle possible mine squares
+    */
+
+    for (
+        let i =
+            possible.length - 1;
+
+        i > 0;
+
+        i--
+    ) {
+
+        const j =
+            Math.floor(
+                Math.random() *
+                (i + 1)
+            );
+
+
+        [
+            possible[i],
+            possible[j]
+        ] = [
+            possible[j],
+            possible[i]
+        ];
+
+    }
+
+
+    /*
+    Place mines
+    */
+
+    for (
+        let i = 0;
+        i < MINE_TOTAL;
+        i++
+    ) {
+
+        possible[i].mine =
+            true;
+
+    }
+
+
+    /*
+    Calculate numbers
+    */
+
+    cells
+        .flat()
+        .forEach(cell => {
+
+            if (
+                !cell.playable ||
+                cell.mine
+            ) {
+
+                return;
+
+            }
+
+
+            cell.nearby =
+                neighbours(cell)
+                    .filter(
+                        neighbour =>
+                            neighbour.mine
+                    )
+                    .length;
+
+        });
+
+}
+
+
+
+/* =========================================
+   CLICK CELL
+========================================= */
+
+function handleCell(
+    cell
+) {
+
+    if (
+        gameOver ||
+        !cell.playable
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        mode === "flag"
+    ) {
+
+        toggleFlag(cell);
+
+        return;
+
+    }
+
+
+    revealCell(cell);
+
+}
+
+
+
+/* =========================================
+   REVEAL
+========================================= */
+
+function revealCell(
+    cell
+) {
+
+    if (
+        gameOver ||
+        cell.revealed ||
+        cell.flagged
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+    First click generates the mines.
+    */
+
+    if (firstClick) {
+
+        placeMines(cell);
+
+        firstClick =
+            false;
+
+    }
+
+
+    cell.revealed =
+        true;
+
+
+    cell.element
+        .classList
+        .add("revealed");
+
+
+    /*
+    Hit mine
+    */
+
+    if (cell.mine) {
+
+        loseGame(cell);
+
+        return;
+
+    }
+
+
+    /*
+    Number
+    */
+
+    if (
+        cell.nearby > 0
+    ) {
+
+        cell.element
+            .textContent =
+                cell.nearby;
+
+
+        cell.element
+            .classList
+            .add(
+                "n" +
+                cell.nearby
+            );
+
+    }
+
+
+    /*
+    Empty square:
+    reveal connected safe area.
+    */
+
+    else {
+
+        neighbours(cell)
+            .forEach(
+                neighbour => {
+
+                    if (
+                        !neighbour.revealed &&
+                        !neighbour.flagged
+                    ) {
+
+                        revealCell(
+                            neighbour
+                        );
+
+                    }
+
+                }
+            );
+
+    }
+
+
+    checkWin();
+
+}
+
+
+
+/* =========================================
+   FLAG
+========================================= */
+
+function toggleFlag(
+    cell
+) {
+
+    if (
+        gameOver ||
+        cell.revealed
+    ) {
+
+        return;
+
+    }
+
+
+    cell.flagged =
+        !cell.flagged;
+
+
+    if (
+        cell.flagged
+    ) {
+
+        flags++;
+
+        cell.element
+            .textContent =
+                "♡";
+
+
+        cell.element
+            .classList
+            .add(
+                "flagged"
+            );
+
+    }
+
+    else {
+
+        flags--;
+
+        cell.element
+            .textContent =
+                "";
+
+
+        cell.element
+            .classList
+            .remove(
+                "flagged"
+            );
+
+    }
+
+
+    document
+        .getElementById(
+            "flagCount"
+        )
+        .textContent =
+            flags;
+
+}
+
+
+
+/* =========================================
+   LOSE
+========================================= */
+
+function loseGame(
+    hitCell
+) {
+
+    gameOver =
+        true;
+
+
+    cells
+        .flat()
+        .forEach(cell => {
+
+            if (
+                cell.playable &&
+                cell.mine
+            ) {
+
+                cell.element
+                    .textContent =
+                        "✦";
+
+
+                cell.element
+                    .classList
+                    .add(
+                        "mine"
+                    );
+
+            }
+
+        });
+
+
+    hitCell.element
+        .classList
+        .add("shake");
+
+
+    document
+        .getElementById(
+            "message"
+        )
+        .textContent =
+            "Oops — you hit a mine. Try again ♡";
+
+}
+
+
+
+/* =========================================
+   WIN CHECK
+========================================= */
+
+function checkWin() {
+
+    const safeCells =
+        cells
+            .flat()
+            .filter(
+                cell =>
+                    cell.playable &&
+                    !cell.mine
+            );
+
+
+    const won =
+        safeCells.every(
+            cell =>
+                cell.revealed
+        );
+
+
+    if (!won) {
+        return;
+    }
+
+
+    gameOver =
+        true;
+
+
+    document
+        .getElementById(
+            "message"
+        )
+        .textContent =
+            "Heart cleared ♡";
+
+
+    document
+        .getElementById(
+            "winCard"
+        )
+        .classList
+        .add("show");
+
+
+    /*
+    Automatically mark remaining mines
+    with hearts.
+    */
+
+    cells
+        .flat()
+        .forEach(cell => {
+
+            if (
+                cell.playable &&
+                cell.mine
+            ) {
+
+                cell.element
+                    .textContent =
+                        "♡";
+
+
+                cell.element
+                    .classList
+                    .add(
+                        "flagged"
+                    );
+
+            }
+
+        });
+
+}
+
+
+
+/* =========================================
+   MODE CONTROLS
+========================================= */
+
+const revealButton =
+    document.getElementById(
+        "revealMode"
+    );
+
+
+const flagButton =
+    document.getElementById(
+        "flagMode"
+    );
+
+
+revealButton
+    .addEventListener(
+        "click",
+        () => {
+
+            mode =
+                "reveal";
+
+
+            revealButton
+                .classList
+                .add("active");
+
+
+            flagButton
+                .classList
+                .remove("active");
+
+        }
+    );
+
+
+flagButton
+    .addEventListener(
+        "click",
+        () => {
+
+            mode =
+                "flag";
+
+
+            flagButton
+                .classList
+                .add("active");
+
+
+            revealButton
+                .classList
+                .remove("active");
+
+        }
+    );
+
+
+
+/* =========================================
+   RESTART
+========================================= */
+
+document
+    .getElementById(
+        "restart"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            mode =
+                "reveal";
+
+
+            revealButton
+                .classList
+                .add("active");
+
+
+            flagButton
+                .classList
+                .remove("active");
+
+
+            createBoard();
+
+        }
+    );
+
+
+
+/* =========================================
+   START
+========================================= */
+
+createBoard();
+
+</script>
+
+</body>
+</html>
