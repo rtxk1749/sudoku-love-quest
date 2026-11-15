@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -341,27 +340,28 @@ function resetPuzzle() {
 }
 
 function unlock() {
-  const entered = document.getElementById("codeInput")
-    .value.trim();
 
-  const solved = board.every((row, r) =>
-    row.every((value, c) => value === solution[r][c])
-  );
+    const entered =
+        document.getElementById("codeInput")
+        .value.trim();
 
-  if (!solved) {
-    alert("Solve the Sudoku first to unlock your surprise!");
-    return;
-  }
+    const solved = board.every((row, r) =>
+        row.every(
+            (value, c) =>
+            value === solution[r][c]
+        )
+    );
 
-  if (entered === SECRET_CODE) {
-    document.getElementById("surprise").style.display =
-      "block";
+    if (!solved) {
+        alert("Solve the Sudoku first to unlock your surprise!");
+        return;
+    }
 
-    // OPTIONAL: Redirect to another HTML page instead.
-    // window.location.href = "task2.html";
-  } else {
-    alert("That's not the right code. Try again! ♡");
-  }
+    if (entered === SECRET_CODE) {
+        window.location.href = "memories.html";
+    } else {
+        alert("That's not the right code. Try again! ♡");
+    }
 }
 
 createKeypad();
