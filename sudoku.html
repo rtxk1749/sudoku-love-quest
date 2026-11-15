@@ -657,6 +657,7 @@ let board =
     );
 
 let selected = null;
+let showMistakes = false;
 
 
 
@@ -750,6 +751,16 @@ function render() {
                 );
 
             }
+            /* Show wrong answers after checking */
+
+            if (
+                showMistakes &&
+                puzzle[r][c] === 0 &&
+                board[r][c] !== 0 &&
+                board[r][c] !== solution[r][c]
+            ) {
+                cell.classList.add("wrong");
+            }
 
 
             /* Display number */
@@ -821,6 +832,7 @@ function putNumber(number) {
 
 
     board[r][c] = number;
+    showMistakes = false;
 
 
     document
@@ -912,7 +924,8 @@ function createKeypad() {
 ========================================= */
 
 function checkPuzzle() {
-
+    showMistakes = true;
+    render();
     const solved =
         board.every(
 
