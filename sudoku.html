@@ -351,7 +351,25 @@ h3 {
 
     color: #a64f78;
 }
+/* whatever CSS is already above */
 
+
+/* Wrong Sudoku answer */
+.cell.wrong {
+    background: #ffd9e1;
+    color: #d83b63;
+    animation: wrongShake 0.25s ease;
+}
+
+@keyframes wrongShake {
+    0%   { transform: translateX(0); }
+    25%  { transform: translateX(-2px); }
+    50%  { transform: translateX(2px); }
+    75%  { transform: translateX(-2px); }
+    100% { transform: translateX(0); }
+}
+
+</style>
 </style>
 </head>
 
