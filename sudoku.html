@@ -1,0 +1,371 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sudoku Love Quest ♡</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px 12px;
+    font-family: Arial, sans-serif;
+    background: #fff0f6;
+    color: #8c4265;
+    text-align: center;
+  }
+  .container {
+    max-width: 440px;
+    margin: auto;
+    background: white;
+    padding: 22px 14px;
+    border-radius: 20px;
+    box-shadow: 0 8px 28px #d47b9b25;
+  }
+  h1 { color: #b94f80; margin-bottom: 6px; }
+  p { line-height: 1.5; }
+  .subtitle { font-size: 14px; }
+  #board {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    width: 100%;
+    max-width: 378px;
+    aspect-ratio: 1;
+    margin: 22px auto;
+    border: 2px solid #9d6380;
+  }
+  .cell {
+    position: relative;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    border-right: 1px solid #e7c7d6;
+    border-bottom: 1px solid #e7c7d6;
+    background: #fff;
+    color: #b94f80;
+    font-size: clamp(14px, 4vw, 21px);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .cell:nth-child(3n) {
+    border-right: 2px solid #9d6380;
+  }
+  .cell:nth-child(n+19):nth-child(-n+27),
+  .cell:nth-child(n+46):nth-child(-n+54) {
+    border-bottom: 2px solid #9d6380;
+  }
+  .cell.given { color: #493943; font-weight: bold; }
+  .cell.special { background: #fce2ef; }
+  .cell.selected { background: #f5b4d0; }
+  .cell.wrong { color: #e53935; }
+  .symbol {
+    position: absolute;
+    top: 1px;
+    left: 2px;
+    font-size: 10px;
+    color: #c24e81;
+  }
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 7px;
+    max-width: 378px;
+    margin: auto;
+  }
+  button.key, button.action {
+    padding: 12px 4px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  button.key {
+    background: #fff3f8;
+    color: #a94774;
+    border: 1px solid #edbfd2;
+    font-size: 17px;
+  }
+  button.action {
+    background: #bd5784;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    margin: 8px 4px;
+  }
+  .code-boxes {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 15px 0;
+  }
+  .code-box {
+    width: 44px;
+    padding: 10px 2px;
+    background: #fff0f6;
+    border: 1px solid #edbfd2;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  input {
+    padding: 12px;
+    border: 1px solid #dba7be;
+    border-radius: 9px;
+    text-align: center;
+    font-size: 19px;
+    width: 180px;
+    letter-spacing: 4px;
+  }
+  #feedback { min-height: 22px; }
+  #surprise {
+    display: none;
+    margin-top: 18px;
+    padding: 18px;
+    border-radius: 14px;
+    background: #fff0f6;
+  }
+  .hint { font-size: 13px; color: #9e7185; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Sudoku Love Quest ♡</h1>
+  <p class="subtitle">
+    Solve the puzzle, discover the hidden code,
+    and unlock your surprise!
+  </p>
+
+  <h3>Chapter 01 — The Hidden Code</h3>
+  <div id="board"></div>
+  <div class="keypad" id="keypad"></div>
+
+  <button class="action" onclick="checkPuzzle()">
+    Check Puzzle
+  </button>
+  <button class="action" onclick="resetPuzzle()">
+    Reset
+  </button>
+
+  <p id="feedback"></p>
+
+  <h3>Find the Secret Code ♡</h3>
+  <p class="hint">
+    Read the marked cells in this order:
+    ♥ ★ ☀ ✿ ♫ ◆
+  </p>
+  <p class="hint">
+    For ♥ and ◆, use the number of empty circles
+    in the symbol ○, which is 0.
+    The other symbols reveal their cell numbers.
+  </p>
+  <div class="code-boxes" id="codeBoxes"></div>
+
+  <h3>Unlock Your Surprise 🔒</h3>
+  <input id="codeInput" maxlength="6"
+         inputmode="numeric" placeholder="000000">
+  <div>
+    <button class="action" onclick="unlock()">
+      Unlock ♡
+    </button>
+  </div>
+
+  <div id="surprise">
+    <h2>Surprise! ♡</h2>
+    <p>
+      Every little moment with you becomes
+      a memory worth keeping.
+      This is only the beginning of our adventure.
+    </p>
+    <h3>Chapter 02 Unlocked!</h3>
+  </div>
+</div>
+
+<script>
+const SECRET_CODE = "021110";
+
+// A valid completed Sudoku.
+const solution = [
+  [5,3,4,6,7,8,9,1,2],
+  [6,7,2,1,9,5,3,4,8],
+  [1,9,8,3,4,2,5,6,7],
+  [8,5,9,7,6,1,4,2,3],
+  [4,2,6,8,5,3,7,9,1],
+  [7,1,3,9,2,4,8,5,6],
+  [9,6,1,5,3,7,2,8,4],
+  [2,8,7,4,1,9,6,3,5],
+  [3,4,5,2,8,6,1,7,9]
+];
+
+// Zero means an empty square.
+const puzzle = [
+  [5,3,0,0,7,0,0,0,0],
+  [6,0,0,1,9,5,0,0,0],
+  [0,9,8,0,0,0,0,6,0],
+  [8,0,0,0,6,0,0,0,3],
+  [4,0,0,8,0,3,0,0,1],
+  [7,0,0,0,2,0,0,0,6],
+  [0,6,0,0,0,0,2,8,0],
+  [0,0,0,4,1,9,0,0,5],
+  [0,0,0,0,8,0,0,7,9]
+];
+
+// Marked squares, in code-reading order.
+// Zero positions are special symbol clues.
+const specialCells = [
+  {r:0, c:2, symbol:"♥", digit:"0"},
+  {r:1, c:2, symbol:"★", digit:"2"},
+  {r:1, c:3, symbol:"☀", digit:"1"},
+  {r:3, c:5, symbol:"✿", digit:"1"},
+  {r:4, c:8, symbol:"♫", digit:"1"},
+  {r:5, c:6, symbol:"◆", digit:"0"}
+];
+
+// Note: the special digit clues are read using
+// the rule above, not necessarily the cell values.
+
+let board = puzzle.map(row => [...row]);
+let selected = null;
+
+function render() {
+  const grid = document.getElementById("board");
+  grid.innerHTML = "";
+
+  board.forEach((row, r) => {
+    row.forEach((value, c) => {
+      const cell = document.createElement("button");
+      cell.className = "cell";
+      cell.type = "button";
+
+      if (puzzle[r][c] !== 0)
+        cell.classList.add("given");
+
+      const special = specialCells.find(
+        item => item.r === r && item.c === c
+      );
+
+      if (special) {
+        cell.classList.add("special");
+        const symbol = document.createElement("span");
+        symbol.className = "symbol";
+        symbol.textContent = special.symbol;
+        cell.appendChild(symbol);
+      }
+
+      if (selected &&
+          selected.r === r && selected.c === c) {
+        cell.classList.add("selected");
+      }
+
+      if (value !== 0) {
+        const number = document.createElement("span");
+        number.textContent = value;
+        cell.appendChild(number);
+      }
+
+      cell.onclick = () => {
+        selected = {r, c};
+        render();
+      };
+
+      grid.appendChild(cell);
+    });
+  });
+
+  renderCode();
+}
+
+function renderCode() {
+  const boxes = document.getElementById("codeBoxes");
+  boxes.innerHTML = "";
+
+  specialCells.forEach(item => {
+    const box = document.createElement("div");
+    box.className = "code-box";
+
+    const solved = board[item.r][item.c] ===
+                   solution[item.r][item.c];
+
+    box.textContent = solved ? item.digit : "?";
+    boxes.appendChild(box);
+  });
+}
+
+function putNumber(number) {
+  if (!selected) return;
+
+  const {r, c} = selected;
+  if (puzzle[r][c] !== 0) return;
+
+  board[r][c] = number;
+  document.getElementById("feedback").textContent = "";
+  render();
+}
+
+function createKeypad() {
+  const keypad = document.getElementById("keypad");
+
+  for (let n = 1; n <= 9; n++) {
+    const button = document.createElement("button");
+    button.className = "key";
+    button.textContent = n;
+    button.onclick = () => putNumber(n);
+    keypad.appendChild(button);
+  }
+
+  const erase = document.createElement("button");
+  erase.className = "key";
+  erase.textContent = "⌫";
+  erase.onclick = () => putNumber(0);
+  keypad.appendChild(erase);
+}
+
+function checkPuzzle() {
+  const solved = board.every((row, r) =>
+    row.every((value, c) => value === solution[r][c])
+  );
+
+  const feedback = document.getElementById("feedback");
+
+  feedback.textContent = solved
+    ? "Perfect! You've solved the Sudoku! ♡"
+    : "Not quite finished yet. Keep going! ♡";
+}
+
+function resetPuzzle() {
+  board = puzzle.map(row => [...row]);
+  selected = null;
+  document.getElementById("feedback").textContent = "";
+  document.getElementById("codeInput").value = "";
+  document.getElementById("surprise").style.display = "none";
+  render();
+}
+
+function unlock() {
+  const entered = document.getElementById("codeInput")
+    .value.trim();
+
+  const solved = board.every((row, r) =>
+    row.every((value, c) => value === solution[r][c])
+  );
+
+  if (!solved) {
+    alert("Solve the Sudoku first to unlock your surprise!");
+    return;
+  }
+
+  if (entered === SECRET_CODE) {
+    document.getElementById("surprise").style.display =
+      "block";
+
+    // OPTIONAL: Redirect to another HTML page instead.
+    // window.location.href = "task2.html";
+  } else {
+    alert("That's not the right code. Try again! ♡");
+  }
+}
+
+createKeypad();
+render();
+</script>
+</body>
+</html>
